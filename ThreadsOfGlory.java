@@ -9,12 +9,15 @@ package threadsofglory;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 /**
  *
  * @author PROXYpc
@@ -26,15 +29,15 @@ public class ThreadsOfGlory extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        
+       /**Class member variables*/
        runnables = new ListView<>();
        threads = new ListView<>();
        userInput = new TextField();
         
-        
-        Button add = new Button();
-        add.setText("Add");
-        add.setOnAction(new EventHandler<ActionEvent>() {
+        /**Adding a new runnable*/
+        Button addButton = new Button();
+        addButton.setText("Add");
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
             
             @Override
             public void handle(ActionEvent event) {
@@ -47,27 +50,51 @@ public class ThreadsOfGlory extends Application {
             }
         });
         
-        Button start = new Button();
-        start.setText("Start");
-        Button stop = new Button();
-        stop.setText("Stop");
+        /**Start thread*/
+        Button startBtn = new Button();
+        startBtn.setText("Start");
         
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        /**(add, col, row, rowspan, colspan*/
-
-        grid.add(new Label("Enter Runnable:"), 1, 0);
-        grid.add(userInput, 2, 0);
-        grid.add(add, 3, 0);
-        grid.add(new Label("Runnables"), 1, 1);
-        grid.add(runnables, 1, 2);
-        grid.add(new Label("Threads"), 3, 1);
-        grid.add(threads, 3, 2);
-        grid.add(start, 1, 4);
-        grid.add(stop, 3, 4);
+        /**Stop thread*/
+        Button stopBtn = new Button();
+        stopBtn.setText("Stop");
         
-        Scene scene = new Scene(grid, 500, 500);
+        
+        /**Labels*/
+        Label useIn = new Label("Enter Runnable:");
+        Label runLabel = new Label("Runnables");
+        Label threadLabel = new Label("Threads");
+        
+        /**GUI goodies */
+        HBox hbox1 = new HBox();
+        hbox1.setPadding(new Insets(15));
+        hbox1.setSpacing(10);
+        hbox1.setAlignment(Pos.CENTER);
+        hbox1.getChildren().addAll(useIn, userInput, addButton);
+        
+        HBox hbox2 = new HBox();
+        hbox2.setPadding(new Insets(15));
+        hbox2.setSpacing(10);
+        hbox2.setAlignment(Pos.CENTER);
+        hbox2.getChildren().addAll(startBtn, stopBtn);
+        
+        VBox vbox1 = new VBox();
+        vbox1.setPadding(new Insets(15));
+        vbox1.setSpacing(10);
+        vbox1.getChildren().addAll(runLabel, runnables);
+        
+        VBox vbox2 = new VBox();
+        vbox2.setPadding(new Insets(15));
+        vbox2.setSpacing(10);
+        vbox2.getChildren().addAll(threadLabel, threads);
+        
+        BorderPane root= new BorderPane();
+        root.setTop(hbox1);
+        root.setLeft(vbox1);
+        root.setRight(vbox2);
+        root.setBottom(hbox2);
+        
+        
+        Scene scene = new Scene(root, 500, 500);
         
         primaryStage.setTitle("Threads of Glory");
         primaryStage.setScene(scene);
