@@ -40,7 +40,6 @@ public class ThreadsOfGlory extends Application {
     ListView <String> threadList;
     TextField userInput;
     Scene scene;
-    
     private static ThreadsOfGlory instance; //using singleton method
     
     public static void main(String[] args) {
@@ -59,9 +58,7 @@ public class ThreadsOfGlory extends Application {
     public static ThreadsOfGlory getInstance(){
         return instance;
     }
-    
-
-    
+        
     public boolean keepRunning(){
         return false;
     }
@@ -79,20 +76,17 @@ public class ThreadsOfGlory extends Application {
         return false;
     }
     
-    public void removeClass(){
+    private void removeClass(){
         
     }
     
-    public void setScene(){
-       /**Class member variables*/
-       runnables =  FXCollections.observableArrayList();
-       load = ThreadsOfGlory.class.getClassLoader();
-       threadList = new ListView<>();
-       runList = new ListView<>();
-       userInput = new TextField();
-        
-        //Adding a class (runnable)
-        
+    private HBox hbox1(){
+        //input area includes instruction label and text input area
+        load = ThreadsOfGlory.class.getClassLoader();
+        userInput = new TextField();  
+        Label useIn = new Label("Enter Runnable:");
+         
+        //Action event for text entered and "Enter" key hit
         userInput.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -123,6 +117,17 @@ public class ThreadsOfGlory extends Application {
             }
         });
         
+        //GUI goodies (setup)
+        HBox hbox1 = new HBox();
+        hbox1.setPadding(new Insets(15));
+        hbox1.setSpacing(10);
+        hbox1.setAlignment(Pos.CENTER);
+        hbox1.getChildren().addAll(useIn, userInput);
+        
+        return hbox1;
+    }
+    
+    private HBox hbox2(){
         //Start thread
         Button startBtn = new Button();
         startBtn.setText("Start");
@@ -152,44 +157,53 @@ public class ThreadsOfGlory extends Application {
             }
         });
         
-        //Labels
-        Label useIn = new Label("Enter Runnable:");
-        Label runLabel = new Label("Runnables");
-        Label threadLabel = new Label("Threads");
+        //GUI goodies (setup)
+         HBox hbox2 = new HBox();
+         hbox2.setPadding(new Insets(15));
+         hbox2.setSpacing(10);
+         hbox2.setAlignment(Pos.CENTER);
+         hbox2.getChildren().addAll(startBtn, stopBtn);
+         
+         return hbox2;
+    }
+    
+    private VBox vbox1(){
+         runnables =  FXCollections.observableArrayList();
+         runList = new ListView<>();
+         Label runLabel = new Label("Runnables");
         
         //GUI goodies (setup)
-        HBox hbox1 = new HBox();
-        hbox1.setPadding(new Insets(15));
-        hbox1.setSpacing(10);
-        hbox1.setAlignment(Pos.CENTER);
-        hbox1.getChildren().addAll(useIn, userInput);
+         VBox vbox1 = new VBox();
+         vbox1.setPadding(new Insets(15));
+         vbox1.setSpacing(10);
+         runList.setItems(runnables);
+         vbox1.getChildren().addAll(runLabel, runList);
         
-        HBox hbox2 = new HBox();
-        hbox2.setPadding(new Insets(15));
-        hbox2.setSpacing(10);
-        hbox2.setAlignment(Pos.CENTER);
-        hbox2.getChildren().addAll(startBtn, stopBtn);
-        
-        VBox vbox1 = new VBox();
-        vbox1.setPadding(new Insets(15));
-        vbox1.setSpacing(10);
-        runList.setItems(runnables);
-        vbox1.getChildren().addAll(runLabel, runList);
-        
-        VBox vbox2 = new VBox();
-        vbox2.setPadding(new Insets(15));
-        vbox2.setSpacing(10);
-        vbox2.getChildren().addAll(threadLabel, threadList);
-        
+        return vbox1;
+    }
+    
+    private VBox vbox2(){
+         threadList = new ListView<>();
+         Label threadLabel = new Label("Threads");
+         
+         //GUI goodies (setup)   
+         VBox vbox2 = new VBox();
+         vbox2.setPadding(new Insets(15));
+         vbox2.setSpacing(10);
+         vbox2.getChildren().addAll(threadLabel, threadList);
+         
+         return vbox2; 
+    }
+    
+    public void setScene(){
         BorderPane root= new BorderPane();
-        root.setTop(hbox1);
-        root.setLeft(vbox1);
-        root.setRight(vbox2);
-        root.setBottom(hbox2);
         
-        
-        scene = new Scene(root, 500, 500);
-        
+        root.setTop(this.hbox1());
+        root.setLeft(this.vbox1());
+        root.setRight(this.vbox2());
+        root.setBottom(this.hbox2());
+               
+        scene = new Scene(root, 500, 500);      
     }
 
   
