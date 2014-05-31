@@ -24,7 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.lang.ClassLoader;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import java.util.ArrayList;
 
 
 /**
@@ -35,7 +35,7 @@ public class ThreadsOfGlory extends Application {
     //Member variables
     ClassLoader load;
     Thread thread;
-    ObservableList<String> runnables;
+    private static ArrayList<Runnable> runnables;
     ListView <String> runList;
     ListView <String> threadList;
     TextField userInput;
@@ -48,7 +48,6 @@ public class ThreadsOfGlory extends Application {
        
     @Override
     public void start(Stage primaryStage) {
-        
         setScene();
         primaryStage.setTitle("Threads of Glory");
         primaryStage.setScene(scene);
@@ -63,18 +62,6 @@ public class ThreadsOfGlory extends Application {
         return false;
     }
     
-    public boolean validClass(String name){
-        //boolean isRunnable = true;
-        try{
-            Class runnable = Class.forName(name);
-            boolean isRunnable = Runnable.class.isAssignableFrom(runnable);          
-            return isRunnable;
-        }catch(Exception e){
-            System.out.println("ERROR: Class not found");
-            System.out.println(e);
-        };
-        return false;
-    }
     
     private void removeClass(){
         
@@ -91,31 +78,38 @@ public class ThreadsOfGlory extends Application {
             @Override
             public void handle(ActionEvent event) {
                 String usrIn = userInput.getText();
+                String name = ("ThreadsOfGlory." + usrIn);
                 
                 //Only add each class once
-                if(runnables.contains(usrIn)){
+                if(runnables.contains(name)){
                     userInput.clear();
                     userInput.requestFocus();
+                    return;
                 } 
-                else if(validClass(usrIn)){
-                    //Load class
-                    try{
-                        Class newClass = load.loadClass(usrIn);
-                        runnables.add(usrIn);  
+                try{
+                    Class<?> runnable = Class.forName(name);
+                    
+                    //If it's a valid class, load class
+                    if(Runnable.class.isAssignableFrom(runnable)){
+                        //Class newClass = load.loadClass(usrIn);
+                        Runnable runMe = (Runnable) runnable.newInstance();
+                        runnables.add(runMe);  
                     
                         userInput.clear();
                         userInput.requestFocus();
-                    }catch (ClassNotFoundException e){
-                        System.out.println("ERROR: Class not found");
-                        System.out.println(e);
-                    };
-                        
-                } else {
+                    }else {
                     userInput.clear();
                     userInput.requestFocus();     
-                }
+                    }
+                }catch (Exception e){
+                    System.out.println("ERROR: Class not found");
+                    System.out.println(e);
+                };
+                
+                        
             }
         });
+      
         
         //GUI goodies (setup)
         HBox hbox1 = new HBox();
@@ -168,7 +162,7 @@ public class ThreadsOfGlory extends Application {
     }
     
     private VBox vbox1(){
-         runnables =  FXCollections.observableArrayList();
+         runnables =  new ArrayList<Runnable>();
          runList = new ListView<>();
          Label runLabel = new Label("Runnables");
         
