@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.lang.ClassLoader;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import java.util.ArrayList;
 
 
@@ -35,7 +36,10 @@ public class ThreadsOfGlory extends Application {
     //Member variables
     ClassLoader load;
     Thread thread;
+    //List of runnable objects
     private static ArrayList<Runnable> runnables;
+    //List of runnable names
+    private static ObservableList<String> runnablesList;
     ListView <String> runList;
     ListView <String> threadList;
     TextField userInput;
@@ -69,8 +73,8 @@ public class ThreadsOfGlory extends Application {
     
     private HBox hbox1(){
         //input area includes instruction label and text input area
-        load = ThreadsOfGlory.class.getClassLoader();
         userInput = new TextField();  
+        runnables = new ArrayList<Runnable>();
         Label useIn = new Label("Enter Runnable:");
          
         //Action event for text entered and "Enter" key hit
@@ -81,7 +85,7 @@ public class ThreadsOfGlory extends Application {
                 String name = ("ThreadsOfGlory." + usrIn);
                 
                 //Only add each class once
-                if(runnables.contains(name)){
+                if(runnablesList.contains(name)){
                     userInput.clear();
                     userInput.requestFocus();
                     return;
@@ -93,19 +97,18 @@ public class ThreadsOfGlory extends Application {
                     if(Runnable.class.isAssignableFrom(runnable)){
                         //Class newClass = load.loadClass(usrIn);
                         Runnable runMe = (Runnable) runnable.newInstance();
-                        runnables.add(runMe);  
-                    
+                        runnablesList.add(name);  
+                        runnables.add(runMe);
+                        
                         userInput.clear();
                         userInput.requestFocus();
-                    }else {
-                    userInput.clear();
-                    userInput.requestFocus();     
                     }
                 }catch (Exception e){
                     System.out.println("ERROR: Class not found");
                     System.out.println(e);
                 };
-                
+                userInput.clear();
+                userInput.requestFocus();  
                         
             }
         });
@@ -162,7 +165,8 @@ public class ThreadsOfGlory extends Application {
     }
     
     private VBox vbox1(){
-         runnables =  new ArrayList<Runnable>();
+         
+         runnablesList =  FXCollections.observableArrayList();
          runList = new ListView<>();
          Label runLabel = new Label("Runnables");
         
@@ -170,7 +174,7 @@ public class ThreadsOfGlory extends Application {
          VBox vbox1 = new VBox();
          vbox1.setPadding(new Insets(15));
          vbox1.setSpacing(10);
-         runList.setItems(runnables);
+         runList.setItems(runnablesList);
          vbox1.getChildren().addAll(runLabel, runList);
         
         return vbox1;
