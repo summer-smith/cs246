@@ -35,11 +35,9 @@ import java.util.ArrayList;
 public class ThreadsOfGlory extends Application {
     //Member variables
     Thread thread;
-    //List of runnable names
-    private static ObservableList<String> runnables;
-    //List of running threads
-    private static ObservableList<Thread> threads;
-    ListView <String> runList;
+
+    ListView <Runnable> runnables;
+    private static ArrayList<Thread> threads;
     ListView <String> threadList;
     TextField userInput;
     Scene scene;
@@ -55,6 +53,7 @@ public class ThreadsOfGlory extends Application {
        
     @Override
     public void start(Stage primaryStage) {
+        instance = this;
         setScene();
         primaryStage.setTitle("Threads of Glory");
         primaryStage.setScene(scene);
@@ -77,6 +76,13 @@ public class ThreadsOfGlory extends Application {
         return stopBtn;
     }
     
+    public boolean keepRunning(){
+       String threadName = Thread.currentThread().getName();
+       
+       boolean keepRunning = threadList.getItems().contains(threadName);
+       return keepRunning;
+    }
+    
     private HBox hbox1(){
         //input area includes instruction label and text input area
         userInput = new TextField();  
@@ -88,22 +94,24 @@ public class ThreadsOfGlory extends Application {
             @Override
             public void handle(ActionEvent event) {
                 String usrIn = userInput.getText();
-                String name = ("ThreadsOfGlory." + usrIn);
+                String name = ("threadsofglory." + usrIn);
                 
-                //Only add each class once
-                if(runnables.contains(name)){
-                    userInput.clear();
-                    userInput.requestFocus();
-                    return;
-                } 
+                
                 try{
                     Class<?> runnable = Class.forName(name);
+                    Runnable runMe = (Runnable) runnable.newInstance();
                     
+                    //Only add each class once
+                    if(runnables.getItems().contains(runMe)){
+                        userInput.clear();
+                        userInput.requestFocus();
+                        return;
+                    } 
                     //If it's a valid class, load class
                     if(Runnable.class.isAssignableFrom(runnable)){
                         //Class newClass = load.loadClass(usrIn);
-                        Runnable runMe = (Runnable) runnable.newInstance();
-                        runnables.add(name);  
+                        
+                        runnables.getItems().add(runMe);  
                         
                         userInput.clear();
                         userInput.requestFocus();
@@ -135,13 +143,13 @@ public class ThreadsOfGlory extends Application {
         startBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                String runName = runList.getSelectionModel().getSelectedItem();
+                Runnable newRun = runnables.getSelectionModel().getSelectedItem();
                 try {
-                    Runnable newRun = (Runnable)Class.forName(runName).newInstance();
                     thread = new Thread(newRun);
                     thread.start();
-                    thread.setName(runName + " - " + thread.getName());
+                    thread.setName(newRun + "-" + thread.getName());
                     threadList.getItems().add(thread.getName());
+                    threads.add(thread);
                 }catch (Exception e){
                     System.out.println("ERROR: " + e);
                 }
@@ -153,14 +161,13 @@ public class ThreadsOfGlory extends Application {
         stopBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                String stopThread = threadList.getSelectionModel().getSelectedItem();
-                int stopIndex = threadList.getSelectionModel().getSelectedIndex();
-                thread = threads.get(stopIndex);
-                if(thread.isAlive()){
-                    thread.interrupt();
+                if (!threadList.getSelectionModel().getSelectedItem().isEmpty()){
+                    String stopThread = threadList.getSelectionModel().getSelectedItem();
+                    int stopIndex = threadList.getSelectionModel().getSelectedIndex();
+                    threadList.getItems().remove(stopThread);
+                    Thread stopMe = threads.get(stopIndex);
+                    threads.remove(stopMe);
                 }
-                threadList.getItems().remove(stopThread);
-                threads.remove(stopIndex);
             }
         });
         
@@ -175,22 +182,20 @@ public class ThreadsOfGlory extends Application {
     }
     
     private VBox vbox1(){
-         runnables =  FXCollections.observableArrayList();
-         runList = new ListView<>();
+         runnables =  new ListView<>();
          Label runLabel = new Label("Runnables");
         
         //GUI goodies (setup)
          VBox vbox1 = new VBox();
          vbox1.setPadding(new Insets(15));
          vbox1.setSpacing(10);
-         runList.setItems(runnables);
-         vbox1.getChildren().addAll(runLabel, runList);
+         vbox1.getChildren().addAll(runLabel, runnables);
         
         return vbox1;
     }
     
     private VBox vbox2(){
-         threads =  FXCollections.observableArrayList();
+         threads =  new ArrayList<>();
          threadList = new ListView<>();
          Label threadLabel = new Label("Threads");
          

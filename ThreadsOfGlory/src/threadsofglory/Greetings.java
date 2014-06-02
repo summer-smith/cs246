@@ -23,6 +23,7 @@ public class Greetings extends Thread{
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
+                            
 				Stage third = new Stage();
 				third.setTitle("new GUI");
 				Group root = new Group();

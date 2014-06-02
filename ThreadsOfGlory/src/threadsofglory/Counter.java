@@ -10,14 +10,15 @@ public class Counter implements Runnable{
     @Override
     public void run(){
         ThreadsOfGlory glory = ThreadsOfGlory.getInstance();
-        try {
-            for (int i = 0; i <= 1000000; i++){
-                System.out.println(i);
-                Thread.sleep(10000);
+        while (glory.keepRunning()){
+            try {
+                for (int i = 0; glory.keepRunning() && i<10000; i++){
+                    System.out.println(i);
+                    Thread.sleep(100);
+                }
+            }catch (Exception e){
+                System.out.println("Counter terminated");
             }
-        }catch (InterruptedException e){
-                System.out.println("ERROR: " + e);
-        };
-        
+        }        
     }
 }
