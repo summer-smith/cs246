@@ -1,0 +1,8 @@
+.button{
+    -fx-background-color: purple;
+    -fx-text-fill: white;
+}
+.label{
+    -fx-background-color: green;
+    -fx-text-fill: yellow;
+}

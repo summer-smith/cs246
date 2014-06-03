@@ -1,5 +1,8 @@
 package threadsofglory;
 
+import javafx.application.Platform;
+import javafx.scene.control.Button;
+
 /**
  * ButtonMover is a misnomer...
  * this class merely changes the text
@@ -9,13 +12,14 @@ package threadsofglory;
  * @author Summer Smith
  */
 
-import javafx.application.Platform;
-import javafx.scene.control.Button;
-
 public class ButtonMover implements Runnable{
    
     Button button;
     
+    /**
+     * Changes the text on the "Stop" button from the 
+     * ThreadOfGlory GUI
+     */
     @Override
     public void run(){
         ThreadsOfGlory glory = ThreadsOfGlory.getInstance();

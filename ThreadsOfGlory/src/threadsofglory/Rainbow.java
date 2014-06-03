@@ -1,5 +1,9 @@
 package threadsofglory;
 
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import java.util.ArrayList;
+
 /**
  * Rainbow will rotate the GUI background
  * through Purple, Blue, Green, Yellow, Orange, Red .
@@ -7,77 +11,62 @@ package threadsofglory;
  * @author Summer Smith
  */
 
-import javafx.beans.property.*;
-import javafx.application.Platform;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import java.util.ArrayList;
-
 public class Rainbow implements Runnable{
     private String Red;
     private String Green;
     private String Blue;
     private String thisColor;
-    private Stage color = ThreadsOfGlory.getInstance().getPrimaryStage();
-    private ObjectProperty<Color> next;
-    private static ArrayList<ObjectProperty<Color>> colors;
-    ThreadsOfGlory glory = ThreadsOfGlory.getInstance();
+    private String style;
+    private Scene colorMe;
+    private String next;
+    private static ArrayList<String> colors;
+    private ThreadsOfGlory glory = ThreadsOfGlory.getInstance();
     
+    /**
+     * Changes the CSS on the background to the colors defined
+     * in the colors array.
+     */
     @Override
     public void run(){
-        //Scene scene = new Scene(new Group(), 500, 400);
-        //scene.getStylesheets().add("path/stylsheet.css");
-        
-        //.custom-button {
-        //-fx-background-color:white;
-        //}
+        colorMe = glory.getScene();
+        colors = new ArrayList<>();
+        fillArray();
         
         while (glory.keepRunning()){
-            for(int i = 0; i < 100; i++){
+            for(int i = 0; i < 7; i++){
                 try{
-                    //scene.getRoot().setStyle("-fx-background-color: " + colorValue +";");
                     next = colors.get(i);
         
-                    
-                    thisColor = "-fx-background-color: rgba("
-                        + ((int) (next.get().getRed() * 255)) + ","
-                        + ((int) (next.get().getGreen() * 255)) + ","
-                        + ((int) (next.get().getBlue() * 255)) + ")";    
-
+                    style = "-fx-background-color: " + next + ";";
            
                     Platform.runLater(new Runnable(){
                         
                         @Override
                         public void run() {
-                            color.getScene().getRoot().setStyle("-fx-background-color: " + thisColor + ";");
+                            colorMe.getRoot().setStyle(style);
                         }
                     });
-            
+                                        
+                    Thread.sleep(800);
+                    
                 }catch (Exception e){
-                System.out.println("Rainbow Terimated - Exception thrown");
+                    System.out.println("Rainbow Terimated - ERROR: " + e);
                 }
             }
         }
     };
     
-    public void buildArray(){
-        ObjectProperty<Color> purple = new SimpleObjectProperty<>(Color.PURPLE);
-        ObjectProperty<Color> blue = new SimpleObjectProperty<>(Color.BLUE);
-        ObjectProperty<Color> green = new SimpleObjectProperty<>(Color.GREEN);
-        ObjectProperty<Color> yellow = new SimpleObjectProperty<>(Color.YELLOW);
-        ObjectProperty<Color> orange = new SimpleObjectProperty<>(Color.ORANGE);
-        ObjectProperty<Color> red = new SimpleObjectProperty<>(Color.RED);
-        
-        colors.add(purple);
-        colors.add(blue);
-        colors.add(green);
-        colors.add(yellow);
-        colors.add(red);
-        colors.add(orange);     
+    /**
+     * Return a filled array
+     */
+    private void fillArray(){
+        colors.add("purple");
+        colors.add("blue");
+        colors.add("green");
+        colors.add("yellow");
+        colors.add("orange");
+        colors.add("red");
+        colors.add("white");
     }
-    
-    public static void main(String[] args) {
-        Rainbow makeItRain = new Rainbow();
-        makeItRain.run();
-    }
+   
 }

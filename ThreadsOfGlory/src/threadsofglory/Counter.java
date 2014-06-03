@@ -7,6 +7,9 @@ package threadsofglory;
  */
 
 public class Counter implements Runnable{
+    /**
+     * Outputs a count to the command line
+     */
     @Override
     public void run(){
         ThreadsOfGlory glory = ThreadsOfGlory.getInstance();
